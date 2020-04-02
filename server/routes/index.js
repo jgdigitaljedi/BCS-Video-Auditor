@@ -3,6 +3,6 @@ const router = express.Router();
 const youtube = require('./youtube.routes');
 
 router.get('/channel', youtube.channel);
-router.get('/playlist', youtube.playlist);
+router.get('/playlists', youtube.playlist);
 
 module.exports = router;

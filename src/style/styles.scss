@@ -1,0 +1,166 @@
+@import './theme.scss';
+@import './mixins/index.scss';
+
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  body {
+    font-family: $primary-font;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    a,
+    p,
+    div,
+    span,
+    article,
+    section {
+      font-family: $primary-font;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: $secondary-font;
+      text-transform: uppercase;
+    }
+    th {
+      font-family: $secondary-font;
+    }
+    a {
+      color: $white;
+      text-decoration: none;
+      &:visited {
+        color: $black;
+      }
+      &:hover {
+        color: $accent;
+      }
+      &:active {
+        color: $warn;
+      }
+    }
+    .p-button-text,
+    .p-dropdown-label,
+    .p-dropdown-item,
+    .p-inputtext {
+      font-family: $primary-font;
+    }
+  }
+
+  .p-dialog {
+    width: 90%;
+    max-width: 1200px;
+    .p-dialog-content {
+      padding: 0;
+      max-height: calc(100vh - 5rem);
+      overflow-y: auto;
+    }
+  }
+}
+
+// primereact overrides
+body {
+  .p-button {
+    background-color: darken($light-orange, 10%);
+    border: 1px solid darken($light-orange, 10%);
+
+    &:enabled:hover,
+    &:enabled:active {
+      background-color: darken($light-orange, 20%);
+      border: 1px solid darken($light-orange, 20%);
+    }
+  }
+  .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+    background-color: darken($light-orange, 10%);
+  }
+  .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
+    background-color: darken($light-orange, 20%);
+  }
+  .p-selectbutton .p-button.p-highlight {
+    background-color: darken($light-orange, 10%);
+    border-color: darken($light-orange, 10%);
+  }
+  .p-selectbutton .p-button.p-highlight:not(.p-disabled):hover {
+    background-color: darken($light-orange, 20%);
+    border-color: darken($light-orange, 20%);
+  }
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight,
+  body .p-dropdown-panel .p-dropdown-items .p-dropdown-item-group.p-highlight {
+    background-color: darken($light-orange, 10%);
+    border-color: darken($light-orange, 10%);
+  }
+  .p-menu .p-menu-list .p-menuitem {
+    a.p-menuitem-link {
+      display: flex;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      span {
+        color: $light-orange;
+      }
+      span.p-menuitem-text {
+        font-weight: bold;
+        font-family: $secondary-font;
+      }
+    }
+    &.active a.p-menuitem-link span {
+      color: $light-blue;
+    }
+  }
+  .p-button.p-component {
+    &.p-button-danger {
+      background-color: $error;
+      border: 1px solid $error;
+      &:hover {
+        border: 1px solid $error;
+        background-color: darken($color: $error, $amount: 10%);
+      }
+    }
+    &.p-button-success {
+      background-color: $success;
+      border: 1px solid $success;
+      &:hover {
+        border: 1px solid $success;
+        background-color: darken($color: $success, $amount: 10%);
+      }
+    }
+    &.p-button-warn {
+      background-color: $warn;
+      border: 1px solid $warn;
+      &:hover {
+        border: 1px solid $warn;
+        background-color: darken($color: $warn, $amount: 10%);
+      }
+    }
+    &.p-button-primary {
+      background-color: $light-orange;
+      border: 1px solid $light-orange;
+      &:hover {
+        border: 1px solid $light-orange;
+        background-color: darken($color: $light-orange, $amount: 10%);
+      }
+    }
+    &.p-button-secondary {
+      background-color: $secondary;
+      border: 1px solid $secondary;
+      &:hover {
+        border: 1px solid $secondary;
+        background-color: darken($color: $secondary, $amount: 10%);
+      }
+    }
+    &.p-button-info {
+      background-color: $light-blue;
+      border: 1px solid $light-blue;
+      &:hover {
+        border: 1px solid $light-blue;
+        background-color: darken($color: $light-blue, $amount: 10%);
+      }
+    }
+  }
+}

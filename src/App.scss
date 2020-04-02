@@ -1,0 +1,10 @@
+@import './style/theme.scss';
+@import './style/styles.scss';
+
+.App {
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background-color: $primary;
+  padding: $gutter;
+}
