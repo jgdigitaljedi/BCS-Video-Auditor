@@ -13,10 +13,13 @@ interface IProps {
 const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) => {
   const [selected, setSelected] = useState(null);
 
-  const rowSelected = useCallback((row: any) => {
-    setSelected(row);
-    rowClicked(row);
-  }, [rowClicked]);
+  const rowSelected = useCallback(
+    (row: any) => {
+      setSelected(row);
+      rowClicked(row);
+    },
+    [rowClicked]
+  );
 
   const imageTemplate = useCallback((rowData: any) => {
     const imageStyle = {
@@ -38,6 +41,22 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
     );
   }, []);
 
+  const determineClass = useCallback((row: any): object => {
+    const title = row?.snippet?.title;
+    if (title) {
+      const tSplit = title.split('-');
+      if (tSplit.length >= 3) {
+        return { 'good-title': true };
+      } else if (tSplit.length === 2) {
+        return { 'warn-title': true };
+      } else {
+        return { 'bad-title': true };
+      }
+    } else {
+      return { 'bad-title': true };
+    }
+  }, []);
+
   const playlistsRows = () => {
     return (
       <DataTable
@@ -56,16 +75,20 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         <Column field="snippet.description" header="Description" />
         <Column field="contentDetails.itemCount" header="# of videos" />
       </DataTable>
-    )
+    );
   };
 
   const generateLink = useCallback((row) => {
     const stuidoLink = `https://studio.youtube.com/video/${row.contentDetails.videoId}/edit`;
-    return <a target="__blank" href={stuidoLink} style={{ wordWrap: 'break-word', color: '#56cbf9' }}>{stuidoLink}</a>;
+    return (
+      <a target="__blank" href={stuidoLink} style={{ wordWrap: 'break-word', color: '#efd6ac' }}>
+        {stuidoLink}
+      </a>
+    );
   }, []);
 
   const formatDate = useCallback((row) => {
-    return <span>{moment(row.snippet.publishedAt).format('MM/DD/YY HH:mm')}</span>
+    return <span>{moment(row.snippet.publishedAt).format('MM/DD/YY HH:mm')}</span>;
   }, []);
 
   const videosRows = () => {
@@ -77,6 +100,7 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         pageLinkSize={50}
         responsive={true}
         scrollable={true}
+        rowClassName={determineClass}
       >
         <Column header="Thumb" body={(e: any) => imageTemplate(e)} />
         <Column field="snippet.title" header="Title" />
@@ -84,7 +108,7 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         <Column field="snippet.publishedAt" header="Published" body={(e: any) => formatDate(e)} />
         <Column header="Link" body={(e: any) => generateLink(e)} />
       </DataTable>
-    )
+    );
   };
 
   return (

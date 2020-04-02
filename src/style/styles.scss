@@ -67,6 +67,17 @@ html {
 
 // primereact overrides
 body {
+  .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    &.good-title {
+      background-color: $success;
+    }
+    &.bad-title {
+      background-color: $error;
+    }
+    &.warn-title {
+      background-color: $warn;
+    }
+  }
   .p-button {
     background-color: darken($light-orange, 10%);
     border: 1px solid darken($light-orange, 10%);
