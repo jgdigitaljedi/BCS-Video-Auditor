@@ -1,0 +1,13 @@
+@import './style/theme.scss';
+
+.main {
+
+  .main-wrapper {
+    display: flex;
+  
+    .half-width {
+      padding: $gutter;
+      width: 50%;
+    }
+  }
+}

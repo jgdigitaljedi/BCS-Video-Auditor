@@ -29,3 +29,21 @@ module.exports.playlist = function (req, res) {
       res.status(500).send(error);
     });
 };
+
+module.exports.playlistItems = function (req, res) {
+  if (req && req.body && req.body.playlistId) {
+    axios
+      .get(
+        `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${req.body.playlistId}&part=snippet,contentDetails&key=${ytKey}&maxResults=50`
+      )
+      .then((result) => {
+        res.status(200).json(result.data);
+      })
+      .catch((error) => {
+        console.log('playlist error', error);
+        res.status(500).send(error);
+      });
+  } else {
+    res.status(400).json({ error: true, message: 'BAD REQUEST: You must send a playlist ID' });
+  }
+};

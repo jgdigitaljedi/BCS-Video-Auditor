@@ -1,0 +1,11 @@
+@import '../style/theme.scss';
+
+.table-wrapper {
+
+  .p-datatable-scrollable-wrapper {
+    height: calc(100vh - 210px);
+    overflow-y: scroll;
+    background-color: $black;
+    font-size: 0.8rem;
+  }
+}
