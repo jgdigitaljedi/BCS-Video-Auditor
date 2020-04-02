@@ -6,14 +6,34 @@
     overflow-y: scroll;
     background-color: $black;
     font-size: 0.8rem;
-    .good-title {
-      background-color: $success;
-    }
-    .bad-title {
-      background-color: $error;
-    }
-    .warn-title {
-      background-color: $warn;
+    tr {
+      &.good-title {
+        background-color: $success;
+      }
+      &.bad-title {
+        background-color: $error;
+      }
+      &.warn-title {
+        background-color: $warn;
+        color: $black;
+        font-weight: bold;
+      }
+      &.today {
+        background-color: $accent;
+      }
+      td a {
+        color: $accent;
+        font-weight: bold;
+        &:visited {
+          color: $secondary;
+        }
+        &:hover {
+          color: $light-orange;
+        }
+        &:active {
+          color: $error;
+        }
+      }
     }
   }
 }

@@ -67,6 +67,10 @@ html {
 
 // primereact overrides
 body {
+  .p-paginator-page.p-paginator-element.p-link.p-highlight,
+  .p-datatable .p-datatable-tbody .p-datatable-row.p-highlight {
+    background-color: $light-orange;
+  }
   .p-datatable .p-datatable-tbody > tr:nth-child(even) {
     &.good-title {
       background-color: $success;

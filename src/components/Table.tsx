@@ -15,7 +15,7 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
 
   const rowSelected = useCallback(
     (row: any) => {
-      setSelected(row);
+      setSelected(row.value);
       rowClicked(row);
     },
     [rowClicked]
@@ -57,6 +57,17 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
     }
   }, []);
 
+  const highlightToday = useCallback((row: any): object => {
+    const pDate = row?.snippet?.publishedAt;
+    const pFormatted = pDate ? moment(pDate) : null;
+    const today = moment();
+    if (pDate) {
+      return { today: pFormatted && moment(pFormatted).isSame(today, 'day') };
+    } else {
+      return { today: false };
+    }
+  }, []);
+
   const playlistsRows = () => {
     return (
       <DataTable
@@ -69,11 +80,17 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         selectionMode="single"
         selection={selected}
         onSelectionChange={rowSelected}
+        rowClassName={highlightToday}
       >
         <Column header="Thumb" body={(e: any) => imageTemplate(e)} />
         <Column field="snippet.title" header="Title" />
         <Column field="snippet.description" header="Description" />
         <Column field="contentDetails.itemCount" header="# of videos" />
+        <Column
+          field="snippet.publishedAt"
+          header="Last Updated"
+          body={(e: any) => formatDate(e)}
+        />
       </DataTable>
     );
   };
@@ -81,7 +98,7 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
   const generateLink = useCallback((row) => {
     const stuidoLink = `https://studio.youtube.com/video/${row.contentDetails.videoId}/edit`;
     return (
-      <a target="__blank" href={stuidoLink} style={{ wordWrap: 'break-word', color: '#efd6ac' }}>
+      <a target="__blank" href={stuidoLink} style={{ wordWrap: 'break-word' }}>
         {stuidoLink}
       </a>
     );
