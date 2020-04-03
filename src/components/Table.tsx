@@ -122,7 +122,11 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         <Column header="Thumb" body={(e: any) => imageTemplate(e)} />
         <Column field="snippet.title" header="Title" />
         <Column field="snippet.description" header="Description" />
-        <Column field="snippet.publishedAt" header="Published" body={(e: any) => formatDate(e)} />
+        <Column
+          field="contentDetails.videoPublishedAt"
+          header="Published"
+          body={(e: any) => formatDate(e)}
+        />
         <Column header="Link" body={(e: any) => generateLink(e)} />
       </DataTable>
     );

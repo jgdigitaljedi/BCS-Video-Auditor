@@ -165,6 +165,7 @@ body {
     &.p-button-secondary {
       background-color: $secondary;
       border: 1px solid $secondary;
+      color: $white;
       &:hover {
         border: 1px solid $secondary;
         background-color: darken($color: $secondary, $amount: 10%);

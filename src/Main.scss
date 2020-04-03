@@ -1,13 +1,29 @@
 @import './style/theme.scss';
 
 .main {
-
+  button {
+    margin-right: $gutter;
+  }
   .main-wrapper {
     display: flex;
-  
-    .half-width {
+
+    .playlist-table {
       padding: $gutter;
-      width: 50%;
+      width: 30%;
+      min-width: 40rem;
+    }
+    .videos-table {
+      padding: $gutter;
+      width: 70%;
+    }
+  }
+  @media screen and (max-width: 1280px) {
+    .main-wrapper {
+      flex-direction: column;
+      .playlist-table,
+      .videos-table {
+        width: 100%;
+      }
     }
   }
 }
