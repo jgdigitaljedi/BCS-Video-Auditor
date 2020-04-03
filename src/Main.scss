@@ -1,8 +1,24 @@
 @import './style/theme.scss';
 
 .main {
-  button {
-    margin-right: $gutter;
+  .main-header {
+    display: flex;
+    .main-buttons {
+      margin-right: 2rem;
+      button {
+        margin-right: $gutter;
+      }
+    }
+    .main-stats {
+      display: flex;
+      div {
+        font-weight: bold;
+        font-family: $secondary-font;
+        color: $light-khaki;
+        font-size: 1.4rem;
+        margin-right: 1rem;
+      }
+    }
   }
   .main-wrapper {
     display: flex;
