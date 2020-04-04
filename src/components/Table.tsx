@@ -43,6 +43,10 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
 
   const determineClass = useCallback((row: any): object => {
     const title = row?.snippet?.title;
+    const status = row?.status?.privacyStatus;
+    if (status === 'private') {
+      return { 'bad-title': true };
+    }
     if (title) {
       const tSplit = title.split('-');
       if (tSplit.length >= 3) {
@@ -88,7 +92,7 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         <Column field="contentDetails.itemCount" header="# of videos" />
         <Column
           field="snippet.publishedAt"
-          header="Last Updated"
+          header="Published Date"
           body={(e: any) => formatDate(e)}
         />
       </DataTable>
@@ -128,6 +132,7 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
           body={(e: any) => formatDate(e)}
         />
         <Column header="Link" body={(e: any) => generateLink(e)} />
+        <Column field="status.privacyStatus" header="Status" />
       </DataTable>
     );
   };

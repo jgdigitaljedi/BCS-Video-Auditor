@@ -14,7 +14,7 @@ function getPlaylists() {
 
 function getVideos(playlistId) {
   return axios.get(
-    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&part=snippet,contentDetails&key=${ytKey}&maxResults=50`
+    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&part=snippet,contentDetails,status&key=${ytKey}&maxResults=50`
   );
 }
 
