@@ -12,6 +12,7 @@ const Main: FunctionComponent<any> = () => {
   const [videos, setVideos] = useState([]);
   const [plName, setPlName] = useState('Selected Playlist');
   const [growl, setGrowl] = useState<any>(null);
+  const [selectedPl, setSelectedPl] = useState<any>(null);
   const url = process.env.REACT_APP_PI === 'true' ? '192.168.0.152' : 'localhost';
 
   const showGrowl = useCallback(
@@ -37,21 +38,9 @@ const Main: FunctionComponent<any> = () => {
       });
   }, [showGrowl, setChannel, url]);
 
-  const refreshData = useCallback(() => {
-    getChannelData();
-    Axios.get(`http://${url}:4001/api/playlists`)
-      .then((result) => {
-        console.log('data', result.data.items);
-        setData(result.data.items);
-      })
-      .catch((error) => {
-        showGrowl({ severity: 'error', summary: 'Error fetching playlist data!', detail: error });
-      });
-  }, [url, showGrowl, getChannelData]);
-
   const rowClicked = useCallback(
-    (row: any) => {
-      console.log('row', row.value);
+    (row: any, refresh?: boolean) => {
+      setSelectedPl(row);
       setPlName(row.value.snippet.title);
       Axios.post(`http://${url}:4001/api/playlist`, { playlistId: row.value.id })
         .then((result) => {
@@ -64,6 +53,21 @@ const Main: FunctionComponent<any> = () => {
     },
     [url, showGrowl]
   );
+
+  const refreshData = useCallback(() => {
+    getChannelData();
+    Axios.get(`http://${url}:4001/api/playlists`)
+      .then((result) => {
+        console.log('data', result.data.items);
+        setData(result.data.items);
+        if (selectedPl) {
+          rowClicked(selectedPl, true);
+        }
+      })
+      .catch((error) => {
+        showGrowl({ severity: 'error', summary: 'Error fetching playlist data!', detail: error });
+      });
+  }, [url, showGrowl, getChannelData, selectedPl, rowClicked]);
 
   const generateReport = useCallback(() => {
     Axios.get(`http://${url}:4001/api/report`)
