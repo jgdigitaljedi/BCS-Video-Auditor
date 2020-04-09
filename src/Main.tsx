@@ -111,7 +111,7 @@ const Main: FunctionComponent<any> = () => {
           <Button
             label="Generate Report"
             icon="pi pi-table"
-            className="p-button-secondary p-button-raised"
+            className="p-button-success p-button-raised"
             onClick={generateReport}
           />
         </div>
