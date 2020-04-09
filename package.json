@@ -31,6 +31,7 @@
   },
   "scripts": {
     "start": "npm run server:dev & react-scripts start",
+    "start:ui": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
