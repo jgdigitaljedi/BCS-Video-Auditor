@@ -6,16 +6,18 @@ const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 const moment = require('moment');
 const fs = require('fs');
 
-function getPlaylists() {
-  return axios.get(
-    `https://www.googleapis.com/youtube/v3/playlists?channelId=${channelId}&part=snippet,contentDetails&key=${ytKey}&maxResults=50`
-  );
+function getPlaylists(pageToken) {
+  const url = pageToken
+    ? `https://www.googleapis.com/youtube/v3/playlists?channelId=${channelId}&part=snippet,contentDetails&key=${ytKey}&maxResults=50&pageToken=${pageToken}`
+    : `https://www.googleapis.com/youtube/v3/playlists?channelId=${channelId}&part=snippet,contentDetails&key=${ytKey}&maxResults=50`;
+  return axios.get(url);
 }
 
-function getVideos(playlistId) {
-  return axios.get(
-    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&part=snippet,contentDetails,status&key=${ytKey}&maxResults=50`
-  );
+function getVideos(playlistId, pageToken) {
+  const url = pageToken
+    ? `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&part=snippet,contentDetails,status&key=${ytKey}&maxResults=50&pageToken=${pageToken}`
+    : `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&part=snippet,contentDetails,status&key=${ytKey}&maxResults=50`;
+  return axios.get(url);
 }
 
 module.exports.channel = function (req, res) {
@@ -33,7 +35,7 @@ module.exports.channel = function (req, res) {
 };
 
 module.exports.playlist = function (req, res) {
-  getPlaylists()
+  getPlaylists(req.body.pageToken)
     .then((result) => {
       res.status(200).json(result.data);
     })
@@ -45,7 +47,7 @@ module.exports.playlist = function (req, res) {
 
 module.exports.playlistItems = function (req, res) {
   if (req && req.body && req.body.playlistId) {
-    getVideos(req.body.playlistId)
+    getVideos(req.body.playlistId, req.body.pageToken)
       .then((result) => {
         res.status(200).json(result.data);
       })

@@ -6,6 +6,13 @@ import DatTable from './components/Table';
 import './Main.scss';
 import moment from 'moment';
 
+interface IPageToken {
+  next: string;
+  prev: string;
+}
+
+type Dir = 'next' | 'prev';
+
 const Main: FunctionComponent<any> = () => {
   const [channel, setChannel] = useState<any>(null);
   const [data, setData] = useState([]);
@@ -13,6 +20,10 @@ const Main: FunctionComponent<any> = () => {
   const [plName, setPlName] = useState('Selected Playlist');
   const [growl, setGrowl] = useState<any>(null);
   const [selectedPl, setSelectedPl] = useState<any>(null);
+  const [playlistRecords, setPlaylistRecords] = useState<number>(1);
+  const [videoRecords, setVideoRecords] = useState<number>(1);
+  const [videoPageTokens, setVideoPageTokens] = useState<IPageToken>({ next: '', prev: '' });
+  const [plPageTokens, setPlPageTokens] = useState<IPageToken>({ next: '', prev: '' });
   const url = process.env.REACT_APP_PI === 'true' ? '192.168.0.152' : 'localhost';
 
   const showGrowl = useCallback(
@@ -30,7 +41,6 @@ const Main: FunctionComponent<any> = () => {
   const getChannelData = useCallback(() => {
     Axios.get(`http://${url}:4001/api/channel`)
       .then((result) => {
-        console.log('channel', result.data);
         setChannel(result.data.items[0]);
       })
       .catch((error) => {
@@ -39,35 +49,57 @@ const Main: FunctionComponent<any> = () => {
   }, [showGrowl, setChannel, url]);
 
   const rowClicked = useCallback(
-    (row: any, refresh?: boolean) => {
+    (row: any, direction?: Dir) => {
       setSelectedPl(row);
       setPlName(row.value.snippet.title);
-      Axios.post(`http://${url}:4001/api/playlist`, { playlistId: row.value.id })
+      Axios.post(`http://${url}:4001/api/playlist`, {
+        playlistId: row.value.id,
+        pageToken: direction ? videoPageTokens[direction] : undefined
+      })
         .then((result) => {
           console.log('playlistItems data', result);
+          setVideoPageTokens({
+            next: result.data.nextPageToken || '',
+            prev: result?.data?.prevPageToken || ''
+          });
           setVideos(result.data.items);
+          setVideoRecords(result?.data?.pageInfo?.totalResults);
         })
         .catch((error) => {
           showGrowl({ severity: 'error', summary: 'Error fetching videos data!', detail: error });
         });
     },
-    [url, showGrowl]
+    [url, showGrowl, videoPageTokens]
   );
 
-  const refreshData = useCallback(() => {
-    getChannelData();
-    Axios.get(`http://${url}:4001/api/playlists`)
-      .then((result) => {
-        console.log('data', result.data.items);
-        setData(result.data.items);
-        if (selectedPl) {
-          rowClicked(selectedPl, true);
-        }
+  const refreshData = useCallback(
+    (direction?: Dir) => {
+      getChannelData();
+      Axios.post(`http://${url}:4001/api/playlists`, {
+        pageToken: direction ? plPageTokens[direction] : undefined
       })
-      .catch((error) => {
-        showGrowl({ severity: 'error', summary: 'Error fetching playlist data!', detail: error });
-      });
-  }, [url, showGrowl, getChannelData, selectedPl, rowClicked]);
+        .then((result) => {
+          console.log('data', result.data);
+          setPlPageTokens({
+            next: result.data.nextPageToken || '',
+            prev: result?.data?.prevPageToken || ''
+          });
+          setData(result.data.items);
+          setPlaylistRecords(result?.data?.pageInfo.totalResults);
+          if (selectedPl) {
+            rowClicked(selectedPl);
+          }
+        })
+        .catch((error) => {
+          showGrowl({ severity: 'error', summary: 'Error fetching playlist data!', detail: error });
+        });
+    },
+    [url, showGrowl, getChannelData, selectedPl, rowClicked, plPageTokens]
+  );
+
+  const refreshButton = useCallback(() => {
+    refreshData();
+  }, [refreshData]);
 
   const generateReport = useCallback(() => {
     Axios.get(`http://${url}:4001/api/report`)
@@ -92,6 +124,21 @@ const Main: FunctionComponent<any> = () => {
       });
   }, [url]);
 
+  const pageChange = useCallback(
+    (event, direction, vTable) => {
+      if (vTable) {
+        if (videoPageTokens.next || videoPageTokens.prev) {
+          rowClicked(selectedPl, direction);
+        }
+      } else {
+        if (plPageTokens.next || plPageTokens.prev) {
+          rowClicked(selectedPl, direction);
+        }
+      }
+    },
+    [rowClicked, selectedPl, videoPageTokens, plPageTokens]
+  );
+
   useEffect(() => {
     if (!channel) {
       refreshData();
@@ -106,7 +153,7 @@ const Main: FunctionComponent<any> = () => {
             label="Refresh Channel Data"
             icon="pi pi-refresh"
             className="p-button-raised"
-            onClick={refreshData}
+            onClick={refreshButton}
           />
           <Button
             label="Generate Report"
@@ -127,11 +174,29 @@ const Main: FunctionComponent<any> = () => {
       <div className="main-wrapper">
         <div className="playlist-table">
           <h2>Playlists</h2>
-          {data?.length && <DatTable data={data} rowClicked={rowClicked} isPlaylists={true} />}
+          {data?.length && (
+            <DatTable
+              data={data}
+              rowClicked={rowClicked}
+              isPlaylists={true}
+              totalRecords={playlistRecords}
+              pageChange={pageChange}
+              videosTable={false}
+            />
+          )}
         </div>
         <div className="videos-table">
           <h2>Videos from {plName}</h2>
-          {videos?.length && <DatTable data={videos} rowClicked={rowClicked} isPlaylists={false} />}
+          {videos?.length && (
+            <DatTable
+              data={videos}
+              rowClicked={rowClicked}
+              isPlaylists={false}
+              totalRecords={videoRecords}
+              pageChange={pageChange}
+              videosTable={true}
+            />
+          )}
         </div>
       </div>
       <Growl ref={(el) => setGrowl(el)} />

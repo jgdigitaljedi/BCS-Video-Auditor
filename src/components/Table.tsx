@@ -8,10 +8,21 @@ interface IProps {
   data: any;
   rowClicked: Function;
   isPlaylists: boolean;
+  totalRecords: number;
+  pageChange: any;
+  videosTable?: boolean;
 }
 
-const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) => {
+const DatTable: FunctionComponent<IProps> = ({
+  data,
+  rowClicked,
+  isPlaylists,
+  totalRecords,
+  pageChange,
+  videosTable
+}) => {
   const [selected, setSelected] = useState(null);
+  const [first, setFirst] = useState<number>(0);
 
   const rowSelected = useCallback(
     (row: any) => {
@@ -19,6 +30,19 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
       rowClicked(row);
     },
     [rowClicked]
+  );
+
+  const pageClicked = useCallback(
+    (event) => {
+      if (first === event.first) {
+        return;
+      } else {
+        const direction = first < event.first ? 'next' : 'prev';
+        setFirst(event.first);
+        pageChange(event, direction, videosTable);
+      }
+    },
+    [pageChange, first, videosTable]
   );
 
   const imageTemplate = useCallback((rowData: any) => {
@@ -85,6 +109,10 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         selection={selected}
         onSelectionChange={rowSelected}
         rowClassName={highlightToday}
+        totalRecords={totalRecords}
+        lazy={true}
+        onPage={pageClicked}
+        first={first}
       >
         <Column header="Thumb" body={(e: any) => imageTemplate(e)} />
         <Column field="snippet.title" header="Title" />
@@ -122,6 +150,10 @@ const DatTable: FunctionComponent<IProps> = ({ data, rowClicked, isPlaylists }) 
         responsive={true}
         scrollable={true}
         rowClassName={determineClass}
+        totalRecords={totalRecords}
+        lazy={true}
+        onPage={pageClicked}
+        first={first}
       >
         <Column header="Thumb" body={(e: any) => imageTemplate(e)} />
         <Column field="snippet.title" header="Title" />
